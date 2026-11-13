@@ -4,6 +4,8 @@ import ai.agilery.coupon.dto.CouponDto;
 import ai.agilery.coupon.dto.ValidationErrorDto;
 import ai.agilery.coupon.enumeration.CouponType;
 import ai.agilery.coupon.validation.ValidationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Component
 public class CouponDiscountValueValidator implements ValidationHandler<CouponDto> {
+
+    private static final Logger log = LoggerFactory.getLogger(CouponDiscountValueValidator.class);
 
     @Override
     public List<ValidationErrorDto> validate(CouponDto dto) {
@@ -45,6 +49,7 @@ public class CouponDiscountValueValidator implements ValidationHandler<CouponDto
                     }
                 }
             } catch (IllegalArgumentException e) {
+                log.warn("Invalid coupon type value: {}", dto.getType(), e);
             }
         }
 

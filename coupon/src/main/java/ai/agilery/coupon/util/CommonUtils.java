@@ -3,6 +3,8 @@ package ai.agilery.coupon.util;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class CommonUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(CommonUtils.class);
 
     /**
      * Retrieves the current {@link Jwt} from the Spring Security context.
@@ -47,6 +51,7 @@ public final class CommonUtils {
             }
             return userId != null ? UUID.fromString(userId) : null;
         } catch (Exception e) {
+            log.warn("Failed to retrieve user ID from JWT token", e);
             return null;
         }
     }
@@ -61,6 +66,7 @@ public final class CommonUtils {
             String accountId = getJwt().getClaimAsString("accountId");
             return accountId != null ? Long.valueOf(accountId) : null;
         } catch (Exception e) {
+            log.warn("Failed to retrieve account ID from JWT token", e);
             return null;
         }
     }
@@ -74,6 +80,7 @@ public final class CommonUtils {
         try {
             return getJwt().getClaimAsString("role");
         } catch (Exception e) {
+            log.warn("Failed to retrieve role name from JWT token", e);
             return null;
         }
     }
@@ -88,6 +95,7 @@ public final class CommonUtils {
         try {
             return getJwt().getClaim("scope");
         } catch (Exception e) {
+            log.warn("Failed to retrieve authorization scopes from JWT token", e);
             return null;
         }
     }

@@ -59,12 +59,19 @@ public class RedemptionServiceImpl implements RedemptionService {
                 .build();
 
         if (validationResponse.getValid()) {
+            // Fetch the coupon to get current version for optimistic locking
             Coupon coupon = couponRepository.findById(validationResponse.getCouponId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
+                    .orElseThrow(() -> new ProcessingException(
                             "Coupon not found with ID: " + validationResponse.getCouponId()));
-            coupon.setRedemptionCount(coupon.getRedemptionCount() + 1);
-            couponRepository.save(coupon);
-            log.info("Incremented redemption count for coupon ID: {}", coupon.getId());
+
+            int updated = couponRepository.incrementRedemptionCount(
+                    validationResponse.getCouponId(), coupon.getVersion());
+            if (updated == 0) {
+                throw new ProcessingException(
+                        "Failed to increment redemption count for coupon ID: " + validationResponse.getCouponId()
+                        + ". Possible concurrent modification detected.");
+            }
+            log.info("Incremented redemption count for coupon ID: {}", validationResponse.getCouponId());
         }
 
         Redemption savedRedemption = redemptionRepository.save(redemption);
