@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:${AGILERY_DATABASE_NAME:testdb}
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+logging:
+  http-payload:
+    enabled: false
+
+feign:
+  client:
+    retry:
+      maximum-attempts: 3
+      backoff-period: 2000
+      maximum-period: 30000
